@@ -1,5 +1,5 @@
-import 'package:couldai_user_app/game_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,31 +8,97 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
+      title: '3D Game',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const GameScreen(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class GameScreen extends StatefulWidget {
+  const GameScreen({super.key});
+
+  @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  late final WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final WebViewController controller = WebViewController();
+    
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..loadFlutterAsset('assets/index.html');
+
+    _controller = controller;
+  }
+
+  void _movePlayer(double dx, double dz) {
+    _controller.runJavaScript('movePlayer($dx, $dz)');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Roblox Type Game'),
+        backgroundColor: Colors.black87,
+      ),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          // Movement Controls
+          Positioned(
+            bottom: 30,
+            right: 30,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                FloatingActionButton(
+                  heroTag: "up",
+                  onPressed: () => _movePlayer(0, 0.5),
+                  child: const Icon(Icons.arrow_upward),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    FloatingActionButton(
+                      heroTag: "left",
+                      onPressed: () => _movePlayer(-0.5, 0),
+                      child: const Icon(Icons.arrow_back),
+                    ),
+                    const SizedBox(width: 60),
+                    FloatingActionButton(
+                      heroTag: "right",
+                      onPressed: () => _movePlayer(0.5, 0),
+                      child: const Icon(Icons.arrow_forward),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton(
+                  heroTag: "down",
+                  onPressed: () => _movePlayer(0, -0.5),
+                  child: const Icon(Icons.arrow_downward),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
