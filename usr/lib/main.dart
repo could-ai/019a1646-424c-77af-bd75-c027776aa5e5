@@ -1,3 +1,5 @@
+import 'package:couldai_user_app/widgets/action_buttons.dart';
+import 'package:couldai_user_app/widgets/joystick.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -60,42 +62,16 @@ class _GameScreenState extends State<GameScreen> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          // Movement Controls
-          Positioned(
-            bottom: 30,
-            right: 30,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                FloatingActionButton(
-                  heroTag: "up",
-                  onPressed: () => _movePlayer(0, 0.5),
-                  child: const Icon(Icons.arrow_upward),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    FloatingActionButton(
-                      heroTag: "left",
-                      onPressed: () => _movePlayer(-0.5, 0),
-                      child: const Icon(Icons.arrow_back),
-                    ),
-                    const SizedBox(width: 60),
-                    FloatingActionButton(
-                      heroTag: "right",
-                      onPressed: () => _movePlayer(0.5, 0),
-                      child: const Icon(Icons.arrow_forward),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                FloatingActionButton(
-                  heroTag: "down",
-                  onPressed: () => _movePlayer(0, -0.5),
-                  child: const Icon(Icons.arrow_downward),
-                ),
-              ],
-            ),
+          // UI Controls
+          const Positioned(
+            left: 50,
+            bottom: 50,
+            child: Joystick(),
+          ),
+          const Positioned(
+            right: 50,
+            bottom: 50,
+            child: ActionButtons(),
           ),
         ],
       ),
